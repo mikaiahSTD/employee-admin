@@ -13,16 +13,16 @@ import lombok.*;
 @Getter
 @Setter
 public class Course {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Column(nullable = false, length = 100)
-    private String title;
+  @Column(nullable = false, length = 100)
+  private String title;
 
-    @Column(nullable = false)
-    private Instant startDate;
+  @Column(nullable = false)
+  private Instant startDate;
 
-    @Column(nullable = false)
-    private Instant endDate;
+  @Column(nullable = false)
+  private Instant endDate;
 }
