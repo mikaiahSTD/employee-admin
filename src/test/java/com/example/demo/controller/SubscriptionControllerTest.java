@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.endpoint.event.EventProducer;
+import com.example.demo.endpoint.event.model.SendEmailSubscriptionValidated;
 import com.example.demo.endpoint.rest.controller.SubscriptionController;
 import com.example.demo.entity.Course;
 import com.example.demo.entity.Subscription;
@@ -32,6 +34,8 @@ class SubscriptionControllerTest {
   @MockBean private UserService userService;
 
   @MockBean private CourseService courseService;
+
+  @MockBean private EventProducer<SendEmailSubscriptionValidated> eventProducer;
 
   private User user;
   private Course course;
@@ -78,6 +82,8 @@ class SubscriptionControllerTest {
         .andExpect(jsonPath("$.id").value(subscriptionId.toString()))
         .andExpect(jsonPath("$.user.firstName").value("John"))
         .andExpect(jsonPath("$.course.title").value("Java"));
+
+    verify(eventProducer).accept(any());
   }
 
   @Test

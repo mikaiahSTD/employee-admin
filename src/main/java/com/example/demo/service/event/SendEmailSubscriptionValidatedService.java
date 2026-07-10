@@ -54,7 +54,7 @@ public class SendEmailSubscriptionValidatedService
             recipientAddress,
             List.of(),
             List.of(),
-            "Subscription validation",
+            subject,
             "Bonjour "
                 + greeting
                 + ",\n\n"
