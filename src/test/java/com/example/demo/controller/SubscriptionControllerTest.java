@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.dto.SubscriptionRequest;
 import com.example.demo.endpoint.event.EventProducer;
 import com.example.demo.endpoint.event.model.SendEmailSubscriptionValidated;
 import com.example.demo.endpoint.rest.controller.SubscriptionController;
@@ -15,6 +15,8 @@ import com.example.demo.entity.User;
 import com.example.demo.service.CourseService;
 import com.example.demo.service.SubscriptionService;
 import com.example.demo.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.ws.rs.core.MediaType;
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +32,7 @@ class SubscriptionControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockBean private SubscriptionService subscriptionService;
-
+  @Autowired private ObjectMapper objectMapper;
   @MockBean private UserService userService;
 
   @MockBean private CourseService courseService;
@@ -72,12 +74,13 @@ class SubscriptionControllerTest {
     when(courseService.getCourseById(courseId)).thenReturn(course);
 
     when(subscriptionService.subscribe(user, course)).thenReturn(subscription);
-
+    SubscriptionRequest request =
+        SubscriptionRequest.builder().userId(userId).courseId(courseId).build();
     mockMvc
         .perform(
             post("/api/subscriptions")
-                .param("userId", userId.toString())
-                .param("courseId", courseId.toString()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(subscriptionId.toString()))
         .andExpect(jsonPath("$.user.firstName").value("John"))
