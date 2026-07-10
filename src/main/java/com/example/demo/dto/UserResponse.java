@@ -26,7 +26,7 @@ public class UserResponse {
   private String firstName;
 
   @Size(max = 100)
-  private String userName;
+  private String username;
 
   @NotBlank
   @Email

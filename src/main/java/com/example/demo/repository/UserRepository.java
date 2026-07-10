@@ -13,14 +13,14 @@ public interface UserRepository extends JpaRepository<User, UUID> {
   @Query(
       value =
           """
-          INSERT INTO users (id, firstName,lastName,username,email)
-          VALUES (gen_random_uuid(), :name)
-          ON CONFLICT (name) DO NOTHING
-          returning id, firstName,lastName,username,email
+          INSERT INTO users (id, first_name,last_name,username,email)
+          VALUES (gen_random_uuid(), :firstName,:lastName,:username,:email)
+          ON CONFLICT (email) DO NOTHING
+          returning id, first_name,last_name,username,email
           """,
       nativeQuery = true)
   Optional<User> insertIgnoreConflict(
-      @Param("firtName") String firstName,
+      @Param("firstName") String firstName,
       @Param("lastName") String lastName,
       @Param("username") String username,
       @Param("email") String email);
@@ -28,18 +28,18 @@ public interface UserRepository extends JpaRepository<User, UUID> {
   @Query(
       value =
           """
-          UPDATE genre
-          SET firstName = :firstName,
-                                  lastName = :lastName,
+          UPDATE users
+          SET first_name = :firstName,
+                                  last_name = :lastName,
                                              username = :username,
                                                            email = :email
           WHERE id = :id
-          RETURNING id, firstName ,lastName,username,email
+          RETURNING id, first_name ,last_name,username,email
           """,
       nativeQuery = true)
   Optional<User> update(
       @Param("id") UUID id,
-      @Param("firtName") String firstName,
+      @Param("firstName") String firstName,
       @Param("lastName") String lastName,
       @Param("username") String username,
       @Param("email") String email);

@@ -14,10 +14,10 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
   @Query(
       value =
           """
-          INSERT INTO users (id, title,startDate,endDate)
+          INSERT INTO course (id, title,start_date,end_date)
           VALUES (gen_random_uuid(), :title,:startDate,:endDate)
-          ON CONFLICT (name) DO NOTHING
-          returning id, title,startDate,endDate
+          ON CONFLICT (title) DO NOTHING
+          returning id, title,start_date,end_date
           """,
       nativeQuery = true)
   Optional<Course> insertIgnoreConflict(
@@ -28,12 +28,12 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
   @Query(
       value =
           """
-          UPDATE genre
+          UPDATE course
           SET title = :title,
-                                  startDate = :startDate,
-                                             endDate = :endDate,
+                                  start_date = :startDate,
+                                             end_date = :endDate,
           WHERE id = :id
-          RETURNING id, title,startDate,endDate
+          RETURNING id, title,start_date,end_date
           """,
       nativeQuery = true)
   Optional<Course> update(

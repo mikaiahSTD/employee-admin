@@ -2,6 +2,7 @@ package com.example.demo.endpoint.rest.controller;
 
 import com.example.demo.dto.UserRequest;
 import com.example.demo.service.UserService;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,12 +26,13 @@ public class UserController {
   }
 
   @PostMapping
-  public ResponseEntity<?> createUser(@RequestBody UserRequest user) {
+  public ResponseEntity<?> createUser(@Valid @RequestBody UserRequest user) {
     return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(user));
   }
 
   @PutMapping("/{userId}")
-  public ResponseEntity<?> updateUser(@PathVariable UUID userId, @RequestBody UserRequest user) {
+  public ResponseEntity<?> updateUser(
+      @PathVariable UUID userId, @Valid @RequestBody UserRequest user) {
     return ResponseEntity.status(HttpStatus.OK).body(userService.update(userId, user));
   }
 

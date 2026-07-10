@@ -15,11 +15,13 @@ import lombok.NoArgsConstructor;
 @Data
 public class CourseRequest {
 
-  @NotBlank
-  @Size(max = 100)
+  @NotBlank(message = "Title is required")
+  @Size(max = 100, message = "Title must be less than 100 words")
   private String title;
 
-  @NotNull private Instant startDate;
+  @NotNull(message = "Start date is required")
+  private Instant startDate;
 
-  @NotNull private Instant endDate;
+  @NotNull(message = "End date is required")
+  private Instant endDate;
 }

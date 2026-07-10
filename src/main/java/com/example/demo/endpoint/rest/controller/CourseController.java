@@ -2,6 +2,7 @@ package com.example.demo.endpoint.rest.controller;
 
 import com.example.demo.dto.CourseRequest;
 import com.example.demo.service.CourseService;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,13 +26,13 @@ public class CourseController {
   }
 
   @PostMapping
-  public ResponseEntity<?> createCourse(@RequestBody CourseRequest course) {
+  public ResponseEntity<?> createCourse(@Valid @RequestBody CourseRequest course) {
     return ResponseEntity.status(HttpStatus.CREATED).body(courseService.create(course));
   }
 
   @PutMapping("/{courseId}")
   public ResponseEntity<?> updateCourse(
-      @PathVariable UUID courseId, @RequestBody CourseRequest course) {
+      @PathVariable UUID courseId, @Valid @RequestBody CourseRequest course) {
     return ResponseEntity.status(HttpStatus.OK).body(courseService.update(courseId, course));
   }
 

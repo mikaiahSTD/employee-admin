@@ -1,6 +1,8 @@
 package com.example.demo.handler;
 
 import com.example.demo.exception.*;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
@@ -42,15 +44,15 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorBody> handleValidation(MethodArgumentNotValidException ex) {
-    HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
-    return ResponseEntity.status(status)
-        .body(
-            ErrorBody.builder()
-                .error("UNPROCESSABLE_ENTITY")
-                .message("Invalid request: " + ex.getMessage())
-                .status(status.value())
-                .build());
+  public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
+
+    Map<String, String> errors = new HashMap<>();
+
+    ex.getBindingResult()
+        .getFieldErrors()
+        .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+
+    return ResponseEntity.badRequest().body(errors);
   }
 
   @ExceptionHandler(UnprocessableEntityException.class)

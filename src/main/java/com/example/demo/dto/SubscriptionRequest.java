@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @Data
 public class SubscriptionRequest {
-  @NotBlank private UUID userId;
-  @NotBlank private UUID courseId;
+  @NotBlank(message = "User id is required")
+  private UUID userId;
+
+  @NotBlank(message = "Course is is required")
+  private UUID courseId;
 }

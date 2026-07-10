@@ -87,7 +87,7 @@ class UserServiceTest {
     when(userRepository.insertIgnoreConflict(
             request.getFirstName(),
             request.getLastName(),
-            request.getUserName(),
+            request.getUsername(),
             request.getEmail()))
         .thenReturn(Optional.of(user));
 

@@ -27,14 +27,14 @@ public class UserService {
   public User create(UserRequest user) {
     return userRepository
         .insertIgnoreConflict(
-            user.getFirstName(), user.getLastName(), user.getUserName(), user.getEmail())
+            user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail())
         .orElseThrow(() -> new NotFoundException("User already exists"));
   }
 
   @Transactional
   public User update(UUID id, UserRequest user) {
     return userRepository
-        .update(id, user.getFirstName(), user.getLastName(), user.getUserName(), user.getEmail())
+        .update(id, user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail())
         .orElseThrow(() -> new NotFoundException("User with id: " + id + " does not exist"));
   }
 
@@ -50,6 +50,6 @@ public class UserService {
   public User getUserById(UUID id) {
     return userRepository
         .findById(id)
-        .orElseThrow(() -> new NotFoundException("User with id: " + id + "not found"));
+        .orElseThrow(() -> new NotFoundException("User with id: " + id + " does not exist"));
   }
 }

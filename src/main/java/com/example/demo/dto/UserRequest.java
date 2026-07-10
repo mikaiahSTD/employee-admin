@@ -14,18 +14,19 @@ import lombok.NoArgsConstructor;
 @Data
 public class UserRequest {
 
-  @NotBlank
   @Size(max = 100)
   private String lastName;
 
-  @Size(max = 100)
+  @NotBlank(message = "First name is required")
+  @Size(max = 100, message = "First name must be less than 100 words")
   private String firstName;
 
-  @Size(max = 100)
-  private String userName;
+  @NotBlank(message = "Username is required")
+  @Size(max = 100, message = "Username must be less than 100 words")
+  private String username;
 
-  @NotBlank
-  @Email
-  @Size(max = 100)
+  @NotBlank(message = "Email is required")
+  @Email(message = "Malformed email")
+  @Size(max = 100, message = "Email must be less than 100 words")
   private String email;
 }
