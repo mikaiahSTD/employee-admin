@@ -1,13 +1,14 @@
 package com.example.demo.endpoint.rest.controller;
 
+import com.example.demo.dto.SubscriptionRequest;
 import com.example.demo.endpoint.event.EventProducer;
 import com.example.demo.endpoint.event.model.SendEmailSubscriptionValidated;
 import com.example.demo.entity.Course;
-import com.example.demo.entity.Subscription;
 import com.example.demo.entity.User;
 import com.example.demo.service.CourseService;
 import com.example.demo.service.SubscriptionService;
 import com.example.demo.service.UserService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.*;
@@ -26,10 +27,9 @@ public class SubscriptionController {
 
   @PostMapping
   @SneakyThrows
-  public ResponseEntity<Subscription> createSubscription(
-      @RequestParam UUID userId, @RequestParam UUID courseId) {
-    User user = userService.getUserById(userId);
-    Course course = courseService.getCourseById(courseId);
+  public ResponseEntity<?> createSubscription(@Valid @RequestBody SubscriptionRequest request) {
+    User user = userService.getUserById(request.getUserId());
+    Course course = courseService.getCourseById(request.getCourseId());
     var event =
         SendEmailSubscriptionValidated.builder()
             .courseId(course.getId())

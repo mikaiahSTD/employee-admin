@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @Data
 public class SubscriptionRequest {
-  @NotBlank(message = "User id is required")
+  @NotNull(message = "User id is required")
   private UUID userId;
 
-  @NotBlank(message = "Course is is required")
+  @NotNull(message = "Course id is required")
   private UUID courseId;
 }
