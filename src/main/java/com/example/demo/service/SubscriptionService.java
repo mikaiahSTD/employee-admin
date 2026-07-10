@@ -4,11 +4,11 @@ import com.example.demo.entity.Course;
 import com.example.demo.entity.Subscription;
 import com.example.demo.entity.User;
 import com.example.demo.repository.SubscriptionRepository;
-import jakarta.transaction.Transactional;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
