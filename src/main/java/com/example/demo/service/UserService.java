@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UserRequest;
 import com.example.demo.entity.User;
-import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.ConflictException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.repository.UserRepository;
 import java.util.List;
@@ -28,7 +28,7 @@ public class UserService {
     return userRepository
         .insertIgnoreConflict(
             user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail())
-        .orElseThrow(() -> new NotFoundException("User already exists"));
+        .orElseThrow(() -> new ConflictException("User already exists"));
   }
 
   @Transactional
@@ -41,7 +41,7 @@ public class UserService {
   @Transactional
   public void deleteById(UUID id) {
     if (userRepository.findById(id).isEmpty()) {
-      throw new BadRequestException("User with id: " + id + " does not exist");
+      throw new NotFoundException("User with id: " + id + " does not exist");
     }
     userRepository.deleteById(id);
   }

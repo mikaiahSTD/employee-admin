@@ -8,7 +8,7 @@ import static org.mockito.Mockito.*;
 
 import com.example.demo.dto.UserRequest;
 import com.example.demo.entity.User;
-import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.ConflictException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.repository.UserRepository;
 import java.util.List;
@@ -102,7 +102,7 @@ class UserServiceTest {
     when(userRepository.insertIgnoreConflict(any(), any(), any(), any()))
         .thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> userService.create(request));
+    assertThrows(ConflictException.class, () -> userService.create(request));
   }
 
   @Test
@@ -142,7 +142,7 @@ class UserServiceTest {
 
     when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-    assertThrows(BadRequestException.class, () -> userService.deleteById(userId));
+    assertThrows(NotFoundException.class, () -> userService.deleteById(userId));
 
     verify(userRepository, never()).deleteById(any());
   }

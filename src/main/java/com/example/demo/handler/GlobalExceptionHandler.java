@@ -14,11 +14,24 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
   private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+  @ExceptionHandler(NoResourceFoundException.class)
+  public ResponseEntity<ErrorBody> handleNotFoundError(NoResourceFoundException ex) {
+    HttpStatus status = HttpStatus.NOT_FOUND;
+    return ResponseEntity.status(status)
+        .body(
+            ErrorBody.builder()
+                .error("NOT_FOUND")
+                .message(ex.getMessage())
+                .status(status.value())
+                .build());
+  }
 
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<ErrorBody> handleNotFound(NotFoundException ex) {
@@ -45,15 +58,23 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
-
+  public ResponseEntity<ErrorBody> handleValidation(MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
-
     ex.getBindingResult()
         .getFieldErrors()
         .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 
-    return ResponseEntity.badRequest().body(errors);
+    String summary = "Validation failed for fields: " + String.join(", ", errors.keySet());
+
+    ErrorBody errorBody =
+        ErrorBody.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+            .message(summary)
+            .details(errors) // Pass the map here
+            .build();
+
+    return ResponseEntity.badRequest().body(errorBody);
   }
 
   @ExceptionHandler(UnprocessableEntityException.class)

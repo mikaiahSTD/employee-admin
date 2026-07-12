@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.CourseRequest;
 import com.example.demo.entity.Course;
-import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.ConflictException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.repository.CourseRepository;
 import java.util.List;
@@ -34,7 +34,7 @@ public class CourseService {
   public Course create(CourseRequest course) {
     return courseRepository
         .insertIgnoreConflict(course.getTitle(), course.getStartDate(), course.getEndDate())
-        .orElseThrow(() -> new NotFoundException("User already exists"));
+        .orElseThrow(() -> new ConflictException("User already exists"));
   }
 
   @Transactional
@@ -47,7 +47,7 @@ public class CourseService {
   @Transactional
   public void deleteById(UUID id) {
     if (courseRepository.findById(id).isEmpty()) {
-      throw new BadRequestException("Course with id: " + id + " does not exist");
+      throw new NotFoundException("Course with id: " + id + " does not exist");
     }
     courseRepository.deleteById(id);
   }

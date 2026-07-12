@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ public class ErrorBody {
   int status;
   String error;
   String message;
+  Map<String, String> details;
   @Builder.Default Instant timestamp = Instant.now();
 
   private static final ObjectMapper MAPPER =
