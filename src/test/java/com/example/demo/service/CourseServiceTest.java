@@ -8,7 +8,7 @@ import static org.mockito.Mockito.*;
 
 import com.example.demo.dto.CourseRequest;
 import com.example.demo.entity.Course;
-import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.ConflictException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.repository.CourseRepository;
 import java.time.Instant;
@@ -95,7 +95,7 @@ class CourseServiceTest {
 
     when(courseRepository.insertIgnoreConflict(any(), any(), any())).thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> courseService.create(request));
+    assertThrows(ConflictException.class, () -> courseService.create(request));
   }
 
   @Test
@@ -134,7 +134,7 @@ class CourseServiceTest {
 
     when(courseRepository.findById(courseId)).thenReturn(Optional.empty());
 
-    assertThrows(BadRequestException.class, () -> courseService.deleteById(courseId));
+    assertThrows(NotFoundException.class, () -> courseService.deleteById(courseId));
 
     verify(courseRepository, never()).deleteById(any());
   }
