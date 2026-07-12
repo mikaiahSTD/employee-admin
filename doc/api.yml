@@ -1,0 +1,377 @@
+openapi: 3.0.3
+info:
+  title: Educational Management API
+  version: 1.0.0
+  description: Unified API for managing users, courses, and course subscriptions.
+paths:
+  # --- USERS ENDPOINTS ---
+  /api/users:
+    get:
+      summary: Retrieve all users
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: List of users successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a new user
+      description: Creates a user using insertIgnoreConflict. Throws an error if the user already exists.
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '201':
+          description: User successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User already exists (throws a NotFoundException based on your service logic).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/users/{userId}:
+    get:
+      summary: Retrieve a user by ID
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update a user
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: User successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete a user
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: User successfully deleted.
+        '400':
+          description: Cannot delete, user does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # --- COURSES ENDPOINTS ---
+  /api/courses:
+    get:
+      summary: Retrieve all courses
+      operationId: getAllCourses
+      responses:
+        '200':
+          description: List of courses successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+    post:
+      summary: Create a new course
+      operationId: createCourse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseRequest'
+      responses:
+        '201':
+          description: Course successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        '404':
+          description: Course or user conflict causing insertion failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/courses/{courseId}:
+    get:
+      summary: Retrieve a course by ID
+      operationId: getCourse
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Course found.
+        '404':
+          description: Course not found.
+
+    put:
+      summary: Update a course
+      operationId: updateCourse
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseRequest'
+      responses:
+        '200':
+          description: Course updated.
+        '404':
+          description: Course not found.
+
+    delete:
+      summary: Delete a course
+      operationId: deleteCourse
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Course deleted.
+        '400':
+          description: Course does not exist.
+
+  # --- SUBSCRIPTIONS ENDPOINTS ---
+  /api/subscriptions:
+    post:
+      summary: Create a subscription
+      description: Subscribes a user to a course. Returns a 409 code if the uniqueness constraint is violated.
+      operationId: createSubscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionRequest'
+      responses:
+        '200':
+          description: Subscription validated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '409':
+          description: Conflict - The user is already subscribed to this course (DataIntegrityViolationException).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User or Course not found.
+
+  /api/subscriptions/{subscriptionId}:
+    delete:
+      summary: Delete a subscription
+      operationId: deleteSubscription
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Subscription deleted.
+
+components:
+  schemas:
+    UserRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - username
+        - email
+      properties:
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+        username:
+          type: string
+          example: "johndoe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "d3b07384-d113-49cd-a5d6-8ee001d51c0f"
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+        username:
+          type: string
+          example: "johndoe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+
+    CourseRequest:
+      type: object
+      required:
+        - title
+        - startDate
+        - endDate
+      properties:
+        title:
+          type: string
+          example: "Spring Boot Modern Masterclass"
+        startDate:
+          type: string
+          format: date-time
+          example: "2026-09-01T09:00:00Z"
+        endDate:
+          type: string
+          format: date-time
+          example: "2026-09-15T17:00:00Z"
+
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "4aa97b5e-143d-4c31-8cf3-138356bb0fc6"
+        title:
+          type: string
+          example: "Spring Boot Modern Masterclass"
+        startDate:
+          type: string
+          format: date-time
+          example: "2026-09-01T09:00:00Z"
+        endDate:
+          type: string
+          format: date-time
+          example: "2026-09-15T17:00:00Z"
+
+    SubscriptionRequest:
+      type: object
+      required:
+        - userId
+        - courseId
+      properties:
+        userId:
+          type: string
+          format: uuid
+          example: "d3b07384-d113-49cd-a5d6-8ee001d51c0f"
+        courseId:
+          type: string
+          format: uuid
+          example: "4aa97b5e-143d-4c31-8cf3-138356bb0fc6"
+
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+        user:
+          $ref: '#/components/schemas/User'
+        course:
+          $ref: '#/components/schemas/Course'
+        subscribedAt:
+          type: string
+          format: date-time
+          example: "2026-07-12T10:00:00Z"
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Subscription already exists"
+        status:
+          type: integer
+          example: 409

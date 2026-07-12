@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @ExtendWith(MockitoExtension.class)
 class SubscriptionServiceTest {
@@ -68,7 +69,8 @@ class SubscriptionServiceTest {
 
     when(subscriptionRepository.existsByUserAndCourse(user, course)).thenReturn(true);
 
-    assertThrows(IllegalStateException.class, () -> subscriptionService.subscribe(user, course));
+    assertThrows(
+        DataIntegrityViolationException.class, () -> subscriptionService.subscribe(user, course));
 
     verify(subscriptionRepository, never()).save(any());
   }

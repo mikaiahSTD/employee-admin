@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -160,6 +161,18 @@ public class GlobalExceptionHandler {
         .body(
             ErrorBody.builder()
                 .error("FORBIDDEN")
+                .message(ex.getMessage())
+                .status(status.value())
+                .build());
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<ErrorBody> handleConflictException(DataIntegrityViolationException ex) {
+    HttpStatus status = HttpStatus.CONFLICT;
+    return ResponseEntity.status(status)
+        .body(
+            ErrorBody.builder()
+                .error("CONFLICT")
                 .message(ex.getMessage())
                 .status(status.value())
                 .build());

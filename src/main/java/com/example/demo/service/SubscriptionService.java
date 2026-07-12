@@ -7,6 +7,7 @@ import com.example.demo.repository.SubscriptionRepository;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.*;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ public class SubscriptionService {
   @Transactional
   public Subscription subscribe(User user, Course course) {
     if (subscriptionRepository.existsByUserAndCourse(user, course)) {
-      throw new IllegalStateException("L'utilisateur est déjà inscrit à ce cours.");
+      throw new DataIntegrityViolationException("Subscription already exists");
     }
 
     Subscription sub =
