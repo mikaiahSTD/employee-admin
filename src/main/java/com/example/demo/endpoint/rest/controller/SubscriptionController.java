@@ -4,6 +4,7 @@ import com.example.demo.dto.SubscriptionRequest;
 import com.example.demo.endpoint.event.EventProducer;
 import com.example.demo.endpoint.event.model.SendEmailSubscriptionValidated;
 import com.example.demo.entity.Course;
+import com.example.demo.entity.Subscription;
 import com.example.demo.entity.User;
 import com.example.demo.service.CourseService;
 import com.example.demo.service.SubscriptionService;
@@ -30,9 +31,10 @@ public class SubscriptionController {
   public ResponseEntity<?> createSubscription(@Valid @RequestBody SubscriptionRequest request) {
     User user = userService.getUserById(request.getUserId());
     Course course = courseService.getCourseById(request.getCourseId());
+    Subscription subscription = subscriptionService.subscribe(user, course);
     var event =
         SendEmailSubscriptionValidated.builder()
-            .courseId(course.getId())
+            .subscriptionId(subscription.getId())
             .to(user.getEmail())
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
@@ -41,7 +43,7 @@ public class SubscriptionController {
             .courseEndDate(course.getEndDate())
             .build();
     eventProducer.accept(List.of(event));
-    return ResponseEntity.ok(subscriptionService.subscribe(user, course));
+    return ResponseEntity.ok(subscription);
   }
 
   @DeleteMapping("/{subscriptionId}")

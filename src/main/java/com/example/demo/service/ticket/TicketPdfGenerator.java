@@ -68,7 +68,7 @@ public class TicketPdfGenerator {
                 margin,
                 y,
                 "Référence",
-                event.getCourseId() != null ? event.getCourseId().toString() : "");
+                event.getSubscriptionId() != null ? event.getSubscriptionId().toString() : "");
 
         y -= 20;
         content.beginText();

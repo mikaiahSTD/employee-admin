@@ -32,12 +32,12 @@ public class SendEmailSubscriptionValidatedService
   public void accept(SendEmailSubscriptionValidated requested) {
     byte[] pdfBytes = ticketPdfGenerator.generate(requested);
 
-    File tempPdf = createTempFile(requested.getCourseId().toString(), ".pdf");
+    File tempPdf = createTempFile(requested.getSubscriptionId().toString(), ".pdf");
     try (FileOutputStream fos = new FileOutputStream(tempPdf)) {
       fos.write(pdfBytes);
     }
 
-    String bucketKey = TICKETS_PREFIX + requested.getCourseId() + ".pdf";
+    String bucketKey = TICKETS_PREFIX + requested.getSubscriptionId() + ".pdf";
     bucketComponent.upload(tempPdf, bucketKey);
 
     String presignedUrl = bucketComponent.presign(bucketKey, Duration.ofHours(24)).toString();
