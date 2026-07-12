@@ -17,7 +17,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString
 public class SendEmailSubscriptionValidated extends PojaEvent {
-  private UUID courseId;
+  private UUID subscriptionId;
   private String to;
   private String firstName;
   private String lastName;
